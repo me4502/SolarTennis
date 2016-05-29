@@ -1,9 +1,5 @@
 package com.me4502.SolarTennis;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -17,8 +13,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.me4502.SolarTennis.entities.Entity;
 import com.me4502.SolarTennis.entities.components.ComponentManager;
 import com.me4502.SolarTennis.entities.components.GravityComponent;
-import com.me4502.SolarTennis.simulation.GravityUpdater;
 import com.me4502.SolarTennis.simulation.GravityUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class SolarTennis extends ApplicationAdapter {
 
@@ -26,19 +25,13 @@ public class SolarTennis extends ApplicationAdapter {
 
 	public static SolarTennis tennis;
 
-	SpriteBatch batch;
-	BitmapFont font;
+	private SpriteBatch batch;
+	private BitmapFont font;
 	public ShapeRenderer shapes;
 
-	GravityUpdater gravityUpdate;
-
-	Random random = new Random();
-
-	public List<Entity> entities = new ArrayList<Entity>();
+	public List<Entity> entities = new ArrayList<>();
 
 	public ComponentManager componentManager = new ComponentManager();
-
-	public static int DISPLAY_WIDTH = 0;
 
 	@Override
 	public void create () {
@@ -57,25 +50,17 @@ public class SolarTennis extends ApplicationAdapter {
 		new UpdateThread().start();
 
 		for(int i = 0; i < 100; i++) {
-			entities.add(new Entity(i, -Gdx.graphics.getWidth()/2+random.nextInt(Gdx.graphics.getWidth()), -Gdx.graphics.getHeight()/2+random.nextInt(Gdx.graphics.getHeight()), 1f));
+			entities.add(new Entity(i, -Gdx.graphics.getWidth()/2 + ThreadLocalRandom.current().nextInt(Gdx.graphics.getWidth()), -Gdx.graphics.getHeight()/2 + ThreadLocalRandom.current().nextInt(Gdx.graphics.getHeight()), 1f));
 		}
 	}
 
-	int viewSize = 25;
+	private int viewSize = 25;
 
 	@Override
 	public void resize (int width, int height) {
 
 		camera = new OrthographicCamera(width, height);
 		camera.translate(-width*2, -height*2);
-
-		//gravityUpdate = new GravityUpdater(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-		//gravityUpdate.setDaemon(true);
-		//gravityUpdate.setName("Gravity Updater");
-		//gravityUpdate.start();
-
-		//gravityUpdate.scheduleUpdate(new GravityNode(100,100,15f));
 
 		UpdateThread.scheduleUpdate();
 	}
@@ -90,16 +75,6 @@ public class SolarTennis extends ApplicationAdapter {
 
 		viewSize = Math.max(1,viewSize);
 
-		//List<GravityNode> gravityEntities = new ArrayList<GravityNode>();
-
-		//for(Entity ent : entities) {
-		//	if(ent instanceof GravitySource)
-		//		gravityEntities.add(new GravityNode(Math.round(ent.getCentreX()), Math.round(ent.getCentreY()), ((GravitySource) ent).getGravityAmount()));
-		//}
-		//gravityEntities.add(new GravityNode(Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY(),Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) ? 10F : 3f));
-
-		//gravityUpdate.scheduleUpdate(gravityEntities.toArray(new GravityNode[gravityEntities.size()]));
-
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -113,7 +88,7 @@ public class SolarTennis extends ApplicationAdapter {
 
 				if(GravityUtil.pow2(x - Gdx.input.getX()) + GravityUtil.pow2(y - (Gdx.graphics.getHeight()-Gdx.input.getY())) > viewSize*viewSize) continue;
 
-				float f = GravityUtil.getGravityAt(x-Gdx.graphics.getWidth()/2,y-Gdx.graphics.getHeight()/2);//GravityUpdater.gravityGrid[x][y]*50;
+				float f = GravityUtil.getGravityAt(x-Gdx.graphics.getWidth()/2,y-Gdx.graphics.getHeight()/2);
 
 				if(x == Gdx.input.getX() && y == Gdx.graphics.getHeight()-Gdx.input.getY()) {
 					cursorPoint = f;
@@ -135,7 +110,7 @@ public class SolarTennis extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		try {
-			font.draw(batch, "Grav: " + cursorPoint/*GravityUpdater.gravityGrid[Gdx.input.getX()][Gdx.graphics.getHeight()-Gdx.input.getY()]*/, -Gdx.graphics.getWidth()/2 + 50, -Gdx.graphics.getHeight()/2 + 50);
+			font.draw(batch, "Grav: " + cursorPoint, -Gdx.graphics.getWidth()/2 + 50, -Gdx.graphics.getHeight()/2 + 50);
 		} catch(Exception e){
 			e.printStackTrace();
 		}

@@ -4,7 +4,7 @@ import com.me4502.SolarTennis.entities.Entity;
 
 public class UpdateThread extends Thread {
 
-	public static int MAX_FPS = 60;
+	private static int MAX_FPS = 60;
 
 	private static Entity[] entities;
 
