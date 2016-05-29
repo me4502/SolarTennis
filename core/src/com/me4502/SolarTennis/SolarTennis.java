@@ -19,67 +19,67 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class SolarTennis extends ApplicationAdapter implements InputProcessor {
 
-	public OrthographicCamera camera;
+    public OrthographicCamera camera;
 
-	public static SolarTennis tennis;
+    public static SolarTennis tennis;
 
     public ShapeRenderer shapes;
 
-	public Array<Entity> entities = new Array<>(Entity.class);
+    public Array<Entity> entities = new Array<>(Entity.class);
 
-	public ComponentManager componentManager = new ComponentManager();
+    public ComponentManager componentManager = new ComponentManager();
 
     private RenderMode renderMode;
 
-	@Override
-	public void create () {
-		tennis = this;
+    @Override
+    public void create() {
+        tennis = this;
 
-		componentManager.registerComponent(new GravityComponent());
+        componentManager.registerComponent(new GravityComponent());
 
-		shapes = new ShapeRenderer();
+        shapes = new ShapeRenderer();
 
-		new UpdateThread().start();
+        new UpdateThread().start();
 
-		for(int i = 0; i < 100; i++) {
-			entities.add(new Entity(i, -Gdx.graphics.getWidth()/2 + ThreadLocalRandom.current().nextInt(Gdx.graphics.getWidth()), -Gdx.graphics.getHeight()/2 + ThreadLocalRandom.current().nextInt(Gdx.graphics.getHeight()), 1f));
-		}
+        for (int i = 0; i < 100; i++) {
+            entities.add(new Entity(i, -Gdx.graphics.getWidth() / 2 + ThreadLocalRandom.current().nextInt(Gdx.graphics.getWidth()), -Gdx.graphics.getHeight() / 2 + ThreadLocalRandom.current().nextInt(Gdx.graphics.getHeight()), 1f));
+        }
 
         renderMode = RenderMode.VIEW_CIRCLE;
 
         Gdx.input.setInputProcessor(this);
-	}
+    }
 
-	@Override
-	public void dispose() {
-		super.dispose();
+    @Override
+    public void dispose() {
+        super.dispose();
 
-		UpdateThread.disable();
-	}
+        UpdateThread.disable();
+    }
 
-	private int viewSize = 25;
+    private int viewSize = 25;
 
-	@Override
-	public void resize (int width, int height) {
-		camera = new OrthographicCamera(width, height);
-		camera.translate(-width*2, -height*2);
-	}
+    @Override
+    public void resize(int width, int height) {
+        camera = new OrthographicCamera(width, height);
+        camera.translate(-width * 2, -height * 2);
+    }
 
-	@Override
-	public void render () {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    @Override
+    public void render() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		shapes.setProjectionMatrix(camera.combined);
-		shapes.begin(ShapeType.Point);
+        shapes.setProjectionMatrix(camera.combined);
+        shapes.begin(ShapeType.Point);
 
         if (renderMode == RenderMode.VIEW_CIRCLE) {
-            if(Gdx.input.isKeyPressed(Input.Keys.RIGHT_BRACKET))
-                viewSize ++;
-            else if(Gdx.input.isKeyPressed(Input.Keys.LEFT_BRACKET))
-                viewSize --;
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT_BRACKET))
+                viewSize++;
+            else if (Gdx.input.isKeyPressed(Input.Keys.LEFT_BRACKET))
+                viewSize--;
 
-            viewSize = Math.max(1,viewSize);
+            viewSize = Math.max(1, viewSize);
 
             for (int x = Gdx.input.getX() - viewSize; x < Gdx.graphics.getWidth() && x < Gdx.input.getX() + viewSize; x++) {
                 for (int y = Gdx.graphics.getHeight() - Gdx.input.getY() - viewSize; y < Gdx.graphics.getHeight() && y < Gdx.graphics.getHeight() - Gdx.input.getY() + viewSize; y++) {
@@ -115,16 +115,16 @@ public class SolarTennis extends ApplicationAdapter implements InputProcessor {
                 renderMode = RenderMode.SCREEN;
         }
 
-		shapes.end();
+        shapes.end();
 
         shapes.begin(ShapeType.Filled);
         shapes.setColor(Color.WHITE);
 
-        for(Entity ent : entities)
-			ent.render();
+        for (Entity ent : entities)
+            ent.render();
 
         shapes.end();
-	}
+    }
 
     @Override
     public boolean keyDown(int keycode) {
@@ -163,7 +163,7 @@ public class SolarTennis extends ApplicationAdapter implements InputProcessor {
 
     @Override
     public boolean scrolled(int amount) {
-        if(renderMode == RenderMode.VIEW_CIRCLE) {
+        if (renderMode == RenderMode.VIEW_CIRCLE) {
             viewSize -= amount;
 
             return true;

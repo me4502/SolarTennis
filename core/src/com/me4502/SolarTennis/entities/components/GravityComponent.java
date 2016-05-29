@@ -3,24 +3,24 @@ package com.me4502.SolarTennis.entities.components;
 import java.util.Arrays;
 
 public class GravityComponent implements Component {
-	private float[] gravity = new float[100];
+    private float[] gravity = new float[100];
 
-	public float get(int entityId) {
-		if(entityId < gravity.length)
-			return gravity[entityId];
-		return 0.0f;
-	}
+    public float get(int entityId) {
+        if (entityId < gravity.length)
+            return gravity[entityId];
+        return 0.0f;
+    }
 
-	public void set(int entityId, float value) {
-		while(gravity.length <= entityId) {
-			gravity = Arrays.copyOf(gravity, gravity.length + 16);
-		}
+    public void set(int entityId, float value) {
+        while (gravity.length <= entityId) {
+            gravity = Arrays.copyOf(gravity, gravity.length + 16);
+        }
 
-		gravity[entityId] = value;
-	}
+        gravity[entityId] = value;
+    }
 
-	@Override
-	public boolean has(int entityId) {
-		return get(entityId) != 0.0f;
-	}
+    @Override
+    public boolean has(int entityId) {
+        return get(entityId) != 0.0f;
+    }
 }
