@@ -3,7 +3,7 @@ package com.me4502.SolarTennis.entities.components;
 import java.util.Arrays;
 
 public class GravityComponent implements Component {
-	private float[] gravity = new float[16];
+	private float[] gravity = new float[100];
 
 	public float get(int entityId) {
 		if(entityId < gravity.length)

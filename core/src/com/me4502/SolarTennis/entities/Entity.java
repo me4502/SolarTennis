@@ -1,11 +1,7 @@
 package com.me4502.SolarTennis.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.me4502.SolarTennis.SolarTennis;
-import com.me4502.SolarTennis.UpdateThread;
 import com.me4502.SolarTennis.entities.components.GravityComponent;
 import com.me4502.SolarTennis.simulation.GravityUtil;
 
@@ -37,8 +33,7 @@ public class Entity {
 
 	public void update() {
 		if(SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId) < 0.1f) {
-			SolarTennis.tennis.entities.remove(this);
-			UpdateThread.scheduleUpdate();
+			SolarTennis.tennis.entities.removeValue(this, true);
 			return;
 		}
 
@@ -49,9 +44,9 @@ public class Entity {
 
 		List<Entity> collidingEntities = new ArrayList<>();
 
-		for(Entity ent : UpdateThread.getSynchronizedEntityList()) {
-
-			if(ent == this) continue;
+		for(int i = 0; i < SolarTennis.tennis.entities.size; i++) {
+            Entity ent = SolarTennis.tennis.entities.items[i];
+			if(ent == this || ent == null) continue;
 
 			float distance = GravityUtil.pow2(ent.x - x) + GravityUtil.pow2(ent.y - y);
 			if(distance < GravityUtil.pow2(SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(ent.entityId) + SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId))) {
@@ -60,10 +55,11 @@ public class Entity {
 		}
 
 		if(collidingEntities.size() > 0) {
-			for(Entity ent : collidingEntities) {
+			for(int i = 0; i < collidingEntities.size(); i++) {
+				Entity ent = collidingEntities.get(i);
 				if(timeSinceCrash > 10) {
-					motionX -= motionX*(SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(ent.entityId)/ SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId));
-					motionY -= motionY*(SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(ent.entityId)/ SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId));
+					motionX -= motionX * (SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(ent.entityId) / SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId));
+					motionY -= motionY * (SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(ent.entityId) / SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId));
 					timeSinceCrash = 0;
 				}
 			}
@@ -113,14 +109,7 @@ public class Entity {
 		}
 	}
 
-	public void render(SpriteBatch batch) {
-		SolarTennis.tennis.shapes.setProjectionMatrix(SolarTennis.tennis.camera.combined);
-		SolarTennis.tennis.shapes.begin(ShapeType.Filled);
-
-		SolarTennis.tennis.shapes.setColor(Color.WHITE);
-
+	public void render() {
 		SolarTennis.tennis.shapes.circle(x, y, SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId));
-
-		SolarTennis.tennis.shapes.end();
 	}
 }
