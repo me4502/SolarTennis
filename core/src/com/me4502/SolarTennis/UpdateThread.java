@@ -6,7 +6,7 @@ import java.util.Locale;
 
 public class UpdateThread extends Thread {
 
-    private static final int SIMULATION_FPS = 60;
+    private static final int SIMULATION_FPS = 20;
     private static final int REQUIRED_FPS = 1000 / SIMULATION_FPS;
 
     private static final String OVERLOAD_WARNING_STRING = "Update took: %d ms. (%d Update: %d) Entity Count: %d";
@@ -34,16 +34,10 @@ public class UpdateThread extends Thread {
                 ent.update();
             }
 
-            try {
-                if (System.currentTimeMillis() - time > REQUIRED_FPS) {
-                    System.out.println(String.format(Locale.ENGLISH, OVERLOAD_WARNING_STRING,
-                            System.currentTimeMillis() - time, updateTime - gravityTime,
-                            System.currentTimeMillis() - updateTime, SolarTennis.tennis.entities.size));
-                }
-
-                Thread.sleep(REQUIRED_FPS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (System.currentTimeMillis() - time > REQUIRED_FPS) {
+                System.out.println(String.format(Locale.ENGLISH, OVERLOAD_WARNING_STRING,
+                        System.currentTimeMillis() - time, updateTime - gravityTime,
+                        System.currentTimeMillis() - updateTime, SolarTennis.tennis.entities.size));
             }
         }
     }

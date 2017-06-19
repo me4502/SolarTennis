@@ -2,7 +2,6 @@ package com.me4502.SolarTennis.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.me4502.SolarTennis.SolarTennis;
-import com.me4502.SolarTennis.entities.components.GravityComponent;
 import com.me4502.SolarTennis.simulation.GravityUtil;
 
 import java.util.ArrayList;
@@ -15,14 +14,15 @@ public class Entity {
     public float y;
     private float motionX, motionY;
 
+    public float mass;
+
     public Entity(int entityId, float x, float y, float mass) {
         this.entityId = entityId;
         this.x = x;
         this.y = y;
+        this.mass = mass;
         motionX = 0;
         motionY = 0;
-
-        SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).set(entityId, mass);
     }
 
     public int getId() {
@@ -32,7 +32,7 @@ public class Entity {
     private int timeSinceCrash = 25;
 
     public void update() {
-        if (SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId) < 0.1f) {
+        if (mass < 0.1f) {
             SolarTennis.tennis.entities.removeValue(this, true);
             return;
         }
@@ -49,17 +49,16 @@ public class Entity {
             if (ent == this || ent == null) continue;
 
             float distance = GravityUtil.pow2(ent.x - x) + GravityUtil.pow2(ent.y - y);
-            if (distance < GravityUtil.pow2(SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(ent.entityId) + SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId))) {
+            if (distance < GravityUtil.pow2(ent.mass + mass)) {
                 collidingEntities.add(ent);
             }
         }
 
         if (collidingEntities.size() > 0) {
-            for (int i = 0; i < collidingEntities.size(); i++) {
-                Entity ent = collidingEntities.get(i);
+            for (Entity ent : collidingEntities) {
                 if (timeSinceCrash > 10) {
-                    motionX -= motionX * (SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(ent.entityId) / SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId));
-                    motionY -= motionY * (SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(ent.entityId) / SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId));
+                    motionX -= motionX * (ent.mass / mass);
+                    motionY -= motionY * (ent.mass / mass);
                     timeSinceCrash = 0;
                 }
             }
@@ -110,6 +109,6 @@ public class Entity {
     }
 
     public void render() {
-        SolarTennis.tennis.shapes.circle(x, y, SolarTennis.tennis.componentManager.getComponent(GravityComponent.class).get(entityId));
+        SolarTennis.tennis.shapes.circle(x, y, mass);
     }
 }

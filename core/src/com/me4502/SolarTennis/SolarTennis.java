@@ -11,8 +11,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.Array;
 import com.me4502.SolarTennis.entities.Entity;
-import com.me4502.SolarTennis.entities.components.ComponentManager;
-import com.me4502.SolarTennis.entities.components.GravityComponent;
 import com.me4502.SolarTennis.simulation.GravityUtil;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -27,21 +25,17 @@ public class SolarTennis extends ApplicationAdapter implements InputProcessor {
 
     public Array<Entity> entities = new Array<>(Entity.class);
 
-    public ComponentManager componentManager = new ComponentManager();
-
     private RenderMode renderMode;
 
     @Override
     public void create() {
         tennis = this;
 
-        componentManager.registerComponent(new GravityComponent());
-
         shapes = new ShapeRenderer();
 
         new UpdateThread().start();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 500; i++) {
             entities.add(new Entity(i, -Gdx.graphics.getWidth() / 2 + ThreadLocalRandom.current().nextInt(Gdx.graphics.getWidth()), -Gdx.graphics.getHeight() / 2 + ThreadLocalRandom.current().nextInt(Gdx.graphics.getHeight()), 1f));
         }
 
