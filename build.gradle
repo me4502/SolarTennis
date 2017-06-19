@@ -4,7 +4,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0'
+        classpath 'com.android.tools.build:gradle:2.3.0'
         classpath 'org.robovm:robovm-gradle-plugin:1.14.0'
     }
 }
@@ -16,7 +16,7 @@ allprojects {
     version = '1.0'
     ext {
         appName = 'SolarTennis'
-        gdxVersion = '1.9.3'
+        gdxVersion = '1.9.6'
         roboVMVersion = '1.14.0'
     }
 
